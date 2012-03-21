@@ -173,8 +173,6 @@ def non_dominated_sort(iterable, key=lambda x: x, allowequality=True):
         fronts.append(front)
     return fronts
     
-''' added by JPQ for Constraine Multi-objective Optimization '''
-
 
 def _const_non_dominated_front_merge_arr(iterable, key=lambda x: x, allowequality=True):
     items = list(iterable)
@@ -273,10 +271,8 @@ def const_crowding_distance(individuals, fitnesses):
     return distances
 
 def const_number_of_feasible_pop(iterable, key=lambda x: x, allowequality=True):
-    """Return a subset of items from iterable which are not dominated by any
-    other item in iterable.
+    """Return the number of feasible population
 
-    Faster version, based on boolean matrix manipulations.
     """
     items = list(iterable)  # pop
  
@@ -285,4 +281,3 @@ def const_number_of_feasible_pop(iterable, key=lambda x: x, allowequality=True):
     v = list([fits[i][1] for i in range(len(fits))])
     n = v.count(True)
     return n
-# ---

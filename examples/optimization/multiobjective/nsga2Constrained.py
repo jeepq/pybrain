@@ -10,6 +10,8 @@ from pybrain.rl.environments.functions.multiobjective import ConstDeb,ConstSrn, 
 import pylab
 from scipy import zeros, array
 
+printAllGen = False
+
 # The Deb function
 #f = ConstDeb()
 # The Srinivas & Deb function
@@ -40,22 +42,28 @@ for x in n._allEvaluations:
     else:
         pylab.plot([x[0][0]], [x[0][1]], 'r.')
 for x in n.bestEvaluation: pylab.plot([x[0][0]], [x[0][1]], 'go')
+pylab.xlabel('Fitness 1')
+pylab.ylabel('Fitness 2')
+pylab.title(f.name + '\n All Evaluations')
 pylab.show()
 print 'Pareto Front'
 for x in n.bestEvaluation: pylab.plot([x[0][0]], [x[0][1]], 'go')
+pylab.xlabel('Fitness 1')
+pylab.ylabel('Fitness 2')
+pylab.title(f.name + '\n Pareto Front')
 pylab.show()
 
 print '==========='
 print '= Results =' 
 print '==========='
-'''
-i=0
-for gen in n._allGenerations:
-    print 'Generation: ',i
-    for j in range(len(gen[1])):
-        print gen[1].keys()[j],gen[1].values()[j]
-    i+=1
-'''
+if printAllGen:
+    i=0
+    for gen in n._allGenerations:
+        print 'Generation: ',i
+        for j in range(len(gen[1])):
+            print gen[1].keys()[j],gen[1].values()[j]
+        i+=1
+
 print 'Population size ',n.populationSize
 print 'Elitism Proportion ',n.eliteProportion
 print 'Mutation Probability ',n.mutationProb

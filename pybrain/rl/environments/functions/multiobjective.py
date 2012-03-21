@@ -12,7 +12,7 @@ __author__ = 'Tom Schaul, tom@idsia.ch'
 class MultiObjectiveFunction(FunctionEnvironment):
     """ A function with multiple outputs. """
     ydim = 2 # by default
-    
+    name = ''
     feasible = None
     xbound = None
     constrained = None
@@ -81,30 +81,40 @@ class KurBenchmark(MultiObjectiveFunction):
         f2 = sum(power(abs(x), 0.8)+5*sin(x**3))
         return -array([f1, f2])
 
-''' added by JPQ'''
 class Deb(MultiObjectiveFunction):
     """ Deb 2001 """
+    name = "Deb 2001 Unconstrained"
     xdim = 2
     def __init__(self):
-        self.xbound = []
-        self.xbound.append((0.1,1.0))
-        self.xbound.append((0.0,5.0))
-        self.constrained = False
+        self.constrained,self.xbound = self.boundaries()
+        
+    def boundaries(self):
+        xbound = []
+        xbound.append((0.1,1.0))
+        xbound.append((0.0,5.0))
+        constrained = False
+        return constrained,xbound
 
     def f(self, x):
         f1 = x[0]
         f2 = (1+x[1])/x[0]
         return -array([f1, f2])
 
+        
 class ConstDeb(MultiObjectiveFunction):
     """ Deb 2001 """
+    name = "Deb 2001 Constrained"
     xdim = 2
     def __init__(self):
         self.feasible = None
-        self.xbound = []
-        self.xbound.append((0.1,1.0))
-        self.xbound.append((0.0,5.0))
-        self.constrained = True
+        self.constrained,self.xbound = self.boundaries()
+        
+    def boundaries(self):
+        xbound = []
+        xbound.append((0.1,1.0))
+        xbound.append((0.0,5.0))
+        constrained = True
+        return constrained,xbound
 
     def g(self, x):
         g1 = x[1] + 9.0*x[0] - 6.0
@@ -112,6 +122,7 @@ class ConstDeb(MultiObjectiveFunction):
         if g1 >= 0 and g2 >= 0:
             return True,array([0.,0.])
         return False,array([g1,g2])
+        
     def f(self, x):
         self.feasible,self.violation = self.g(x)
         ''' 
@@ -127,16 +138,20 @@ class ConstDeb(MultiObjectiveFunction):
 
 class Pol(MultiObjectiveFunction):
     """ Poloni 1997 """
+    name = "Poloni 1997 Unconstrained"
     xdim = 2
     _A1 = 0.5 * sin(1) - 2*cos(1) + sin(2) -1.5*cos(2)
     _A2 = 1.5 * sin(1) - cos(1) + 2*sin(2) -0.5*cos(2)
     
     def __init__(self):
-        self.xbound = []
-        self.xbound.append((-pi,pi))
-        self.xbound.append((-pi,pi))
-        self.constrained = False
-
+        self.constrained,self.xbound = self.boundaries()
+        
+    def boundaries(self):
+        xbound = []
+        xbound.append((-pi,pi))
+        xbound.append((-pi,pi))
+        constrained = False
+        return constrained,xbound
 
     def f(self, x):
         B1 = 0.5 * sin(x[0]) - 2*cos(x[0]) + sin(x[1]) -1.5*cos(x[1])
@@ -148,13 +163,18 @@ class Pol(MultiObjectiveFunction):
 
 class ConstSrn(MultiObjectiveFunction):
     """ Srinivas and Deb 1994 """
+    name = "Srinivas and Deb 1994 Constrained"
     xdim = 2
     def __init__(self):
         self.feasible = None
-        self.xbound = []
-        self.xbound.append((-20.0,20.0))
-        self.xbound.append((-20.0,20.0))
-        self.constrained = True
+        self.constrained,self.xbound = self.boundaries()
+        
+    def boundaries(self):
+        xbound = []
+        xbound.append((-20.0,20.0))
+        xbound.append((-20.0,20.0))
+        constrained = True
+        return constrained,xbound
 
     def g(self, x):
         g1 = 225 - (x[1]**2 + x[0]**2)
@@ -162,6 +182,7 @@ class ConstSrn(MultiObjectiveFunction):
         if g1 >= 0 and g2 >= 0:
             return True,array([0.,0.])
         return False,array([g1,g2])
+        
     def f(self, x):
         self.feasible,self.violation = self.g(x)
         MultiObjectiveFunction.feasible = self.feasible
@@ -172,18 +193,23 @@ class ConstSrn(MultiObjectiveFunction):
         
 class ConstOsy(MultiObjectiveFunction):
     """ Osyczka and Kundu 1995 """
+    name = "Osyczka and Kundu 1995 Constrained"
     xdim = 6
     def __init__(self):
         self.feasible = None
-        self.xbound = []
-        self.xbound.append((0.0,10.0))
-        self.xbound.append((0.0,10.0))
-        self.xbound.append((1.0,5.0))
-        self.xbound.append((0.0,6.0))
-        self.xbound.append((1.0,5.0))
-        self.xbound.append((0.0,10.0))
-        self.constrained = True
-
+        self.constrained,self.xbound = self.boundaries()
+        
+    def boundaries(self):
+        xbound = []
+        xbound.append((0.0,10.0))
+        xbound.append((0.0,10.0))
+        xbound.append((1.0,5.0))
+        xbound.append((0.0,6.0))
+        xbound.append((1.0,5.0))
+        xbound.append((0.0,10.0))
+        constrained = True
+        return constrained,xbound
+ 
     def g(self, x):
         g1 = x[0] + x[1] -2.0
         g2 = 6.0 -x[0] -x[1]
@@ -194,6 +220,7 @@ class ConstOsy(MultiObjectiveFunction):
         if g1 >= 0 and g2 >= 0 and g3 >= 0 and g4 >= 0 and g5 >= 0 and g6 >= 0:
             return True,array([0.,0.])
         return False,array([g1,g2,g3,g4,g5,g6])
+        
     def f(self, x):
         self.feasible,self.violation = self.g(x)
         MultiObjectiveFunction.feasible = self.feasible
@@ -204,13 +231,18 @@ class ConstOsy(MultiObjectiveFunction):
 
 class ConstTnk(MultiObjectiveFunction):
     """ Tanaka 1995 """
+    name = "Tanaka 1995 Constrained"
     xdim = 2
     def __init__(self):
         self.feasible = None
-        self.xbound = []
-        self.xbound.append((0.0,pi))
-        self.xbound.append((0.0,pi))
-        self.constrained = True
+        self.constrained,self.xbound = self.boundaries()
+        
+    def boundaries(self):
+        xbound = []
+        xbound.append((0.0,pi))
+        xbound.append((0.0,pi))
+        constrained = True
+        return constrained,xbound
 
     def g(self, x):
         if x[1] == 0.0:
@@ -222,6 +254,7 @@ class ConstTnk(MultiObjectiveFunction):
         if g1 >= 0 and g2 >= 0:
             return True,array([0.,0.])
         return False,array([g1,g2])
+        
     def f(self, x):
         self.feasible,self.violation = self.g(x)
         MultiObjectiveFunction.feasible = self.feasible
@@ -229,15 +262,21 @@ class ConstTnk(MultiObjectiveFunction):
         f1 = x[0]
         f2 = x[1]
         return -array([f1, f2])
+        
 class ConstBnh(MultiObjectiveFunction):
     """ Binh & Korn 1997 """
+    name = "Binh & Korn 1997 Constrained"
     xdim = 2
     def __init__(self):
         self.feasible = None
-        self.xbound = []
-        self.xbound.append((0.0,5.0))
-        self.xbound.append((0.0,3.0))
-        self.constrained = True
+        self.constrained,self.xbound = self.boundaries()
+        
+    def boundaries(self):
+        xbound = []
+        xbound.append((0.0,5.0))
+        xbound.append((0.0,3.0))
+        constrained = True
+        return constrained,xbound
 
     def g(self, x):
         g1 = 25 - (x[0]-5.0)**2 - x[1]**2
@@ -245,6 +284,7 @@ class ConstBnh(MultiObjectiveFunction):
         if g1 >= 0 and g2 >= 0:
             return True,array([0.,0.])
         return False,array([g1,g2])
+        
     def f(self, x):
         self.feasible,self.violation = self.g(x)
         MultiObjectiveFunction.feasible = self.feasible
@@ -252,4 +292,3 @@ class ConstBnh(MultiObjectiveFunction):
         f1 = 4*x[0]**2 + 4*x[1]**2
         f2 = (x[0]-5)**2 + (x[1]-5)**2
         return -array([f1, f2])
-# ---

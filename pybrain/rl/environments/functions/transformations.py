@@ -16,11 +16,9 @@ def oppositeFunction(basef):
     """ the opposite of a function """
     if isinstance(basef, FitnessEvaluator):
         if isinstance(basef, FunctionEnvironment):
-            ''' added by JPQ '''
             if isinstance(basef, MultiObjectiveFunction):
                 res = MultiObjectiveFunction()
             else:
-            # ---
                 res = FunctionEnvironment(basef.xdim, basef.xopt)
         else:
             res = FitnessEvaluator()        

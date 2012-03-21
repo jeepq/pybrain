@@ -26,7 +26,6 @@ class MultiObjectiveGA(GA):
     def _learnStep(self):
         """ do one generation step """
         # evaluate fitness
-        """ added by JPQ """
         if isinstance(self.fitnesses,dict):
             oldfitnesses = self.fitnesses
             self.fitnesses = dict()
@@ -37,7 +36,6 @@ class MultiObjectiveGA(GA):
                     self.fitnesses[tuple(indiv)] = self._oneEvaluation(indiv)
             del oldfitnesses
         else:
-        # ---
             self.fitnesses = dict([(tuple(indiv), self._oneEvaluation(indiv)) for indiv in self.currentpop])
 
         if self.storeAllPopulations:

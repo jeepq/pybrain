@@ -94,13 +94,11 @@ class XMLHandling:
             root = self.root
         for n in root.childNodes:
             if n.nodeName == name:
-# modif JPQ
-#                if 'name' in n.attributes:
-                if n.attributes['name']:
-# modif JPQ
-#                    if n.attributes['name'] == nameattr:
-                    if n.attributes['name'].value == nameattr:
+                try:
+                    if n.getAttribute("name") == nameattr:
                         return n
+                except:
+                    pass
         return None
 
     def writeDoubles(self, node, l, precision = 6):

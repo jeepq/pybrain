@@ -42,12 +42,10 @@ class BlackBoxOptimizer(DirectSearchLearner):
     #: dimension of the search space, if applicable
     numParameters = None
     
-    '''added by JPQ Boundaries of the search space, if applicable'''
     xBound = None
     feasible = None
     constrained = None
     violation = None
-    # ---   
     
     #: Store all evaluations (in the ._allEvaluations list)?
     storeAllEvaluations = False
@@ -130,17 +128,27 @@ class BlackBoxOptimizer(DirectSearchLearner):
                 elif self.numParameters is not evaluator.xdim:
                     raise ValueError("Parameter dimension mismatch: evaluator expects "+str(evaluator.xdim)\
                                      +" but it was set to "+str(self.numParameters)+".")
-                '''added by JPQ to handle boundaries on the parameters'''
                 self.evaluator = evaluator
-                if self.xBound is None:            
-                    self.xBound = evaluator.xbound
+                if self.xBound is None:
+                    try:
+                        self.xBound = evaluator.xbound
+                    except:
+                        self.xBound = None
                 if self.feasible is None:
-                    self.feasible = evaluator.feasible
+                    try:
+                        self.feasible = evaluator.feasible
+                    except:
+                        self.feasible = None
                 if self.constrained is None:
-                    self.constrained = evaluator.constrained
+                    try:
+                        self.constrained = evaluator.constrained
+                    except:
+                        self.constrained = None
                 if self.violation is None:
-                    self.violation = evaluator.violation
-                # ---
+                    try:
+                        self.violation = evaluator.violation
+                    except:
+                        self.violation = None
         # default: maximize
         if self.minimize is None:
             self.minimize = False
@@ -226,11 +234,9 @@ class BlackBoxOptimizer(DirectSearchLearner):
             res = self.__evaluator(evaluable.params)
         else:            
             res = self.__evaluator(evaluable)
-            ''' added by JPQ '''
             if self.constrained :
                 self.feasible = self.__evaluator.outfeasible
                 self.violation = self.__evaluator.outviolation
-            # ---
         if isscalar(res):
             # detect numerical instability
             if isnan(res) or isinf(res):
@@ -255,24 +261,18 @@ class BlackBoxOptimizer(DirectSearchLearner):
                 self._allEvaluated.append(evaluable.copy())        
         if self.storeAllEvaluations:
             if self._wasOpposed and isscalar(res):
-                ''' added by JPQ '''
                 if self.constrained :
                     self._allEvaluations.append([-res,self.feasible,self.violation])
-                # ---
                 else:
                     self._allEvaluations.append(-res)
             else:
-                ''' added by JPQ '''
                 if self.constrained :
                     self._allEvaluations.append([res,self.feasible,self.violation])
-                # ---
                 else:
                     self._allEvaluations.append(res)
-        ''' added by JPQ '''
         if self.constrained :
             return [res,self.feasible,self.violation]
         else:
-        # ---
             return res
     
     def _stoppingCriterion(self):

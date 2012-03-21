@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 """ An illustration of using the NSGA-II multi-objective optimization algorithm
-on Unconstrained Multi-Objective Optimization benchmark function. """
+    on Unconstrained Multi-Objective Optimization benchmark function.
+    Have been tested again the Deb function by Deb (2001) 
+    and the Pol function by Poloni & All (1997)
+"""
 
 __author__ = 'Jean Pierre Queau, jeanpierre.queau@sbmoffshore.com'
 
@@ -9,10 +12,12 @@ from pybrain.rl.environments.functions.multiobjective import Deb, Pol
 import pylab
 from scipy import zeros, array
 
+printAllGen = False
+
 # The Deb function
-#f = Deb()
+f = Deb()
 # The Pol function
-f = Pol()
+#f = Pol()
 
 # start at the origin
 x0 = zeros(f.indim)
@@ -31,21 +36,27 @@ print 'Plotting the Results'
 print 'All Evaluations'
 for x in n._allEvaluations: pylab.plot([x[0]], [x[1]], 'b.')
 for x in n.bestEvaluation: pylab.plot([x[0]], [x[1]], 'ro')
+pylab.xlabel('Fitness 1')
+pylab.ylabel('Fitness 2')
+pylab.title(f.name + '\n All Evaluations')
 pylab.show()
 print 'Pareto Front'
 for x in n.bestEvaluation: pylab.plot([x[0]], [x[1]], 'ro')
+pylab.xlabel('Fitness 1')
+pylab.ylabel('Fitness 2')
+pylab.title(f.name + '\n Pareto Front')
 pylab.show()
 print '==========='
 print '= Results =' 
 print '==========='
-'''
-i=0
-for gen in n._allGenerations:
-    print 'Generation: ',i
-    for j in range(len(gen[1])):
-        print gen[1].keys()[j],gen[1].values()[j]
-    i+=1
-'''
+
+if printAllGen:
+    i=0
+    for gen in n._allGenerations:
+        print 'Generation: ',i
+        for j in range(len(gen[1])):
+            print gen[1].keys()[j],gen[1].values()[j]
+        i+=1
 print 'Population size ',n.populationSize
 print 'Elitism Proportion ',n.eliteProportion
 print 'Mutation Probability ',n.mutationProb

@@ -32,34 +32,26 @@ class GA(ContinuousOptimizer, Evolution):
     
     mustMaximize = True
 
-    '''added by JPQ'''
     def initBoundaries(self):
         assert len(self.xBound) == self.numParameters
         self.mins = array([min_ for min_, max_ in self.xBound])
         self.maxs = array([max_ for min_, max_ in self.xBound])
-    # ---        
     def initPopulation(self):
-        '''added by JPQ '''
         if self.xBound is not None:
             self.initBoundaries()
-        # ---
         if self.initialPopulation is not None:
             self.currentpop = self.initialPopulation
         else:
             self.currentpop = [self._initEvaluable]
             for _ in range(self.populationSize-1):
-                '''added by JPQ '''
                 if self.xBound is None:
-                # ---
                     self.currentpop.append(self._initEvaluable+randn(self.numParameters)
                                        *self.mutationStdDev*self.initRangeScaling)
-                    '''added by JPQ '''
                 else:
                     position = rd.random(self.numParameters)
                     position *= (self.maxs-self.mins)
                     position += self.mins
                     self.currentpop.append(position)
-                    # ---
 
     def crossOverOld(self, parents, nbChildren):
         """ generate a number of children by doing 1-point cross-over """
@@ -87,7 +79,6 @@ class GA(ContinuousOptimizer, Evolution):
                 res[i] = indiv[i] + gauss(0, self.mutationStdDev)
         return res
         
-    ''' added by JPQ in replacement of crossover and mutated '''    
     def crossOver(self, parents, nbChildren):
         """ generate a number of children by doing 1-point cross-over """
         """ change as the <choice> return quite often the same p1 and even
@@ -116,7 +107,12 @@ class GA(ContinuousOptimizer, Evolution):
         if len(children) > nbChildren:
             children = children[:nbChildren]  
         elif len(children) < nbChildren:
-            children +=sample(children,(nbChildren-len(children)))  
+            k = True
+            while k:
+               children +=sample(children,len(children)) 
+               if len(children) >= nbChildren:
+                  children = children[:nbChildren]
+                  k = False
         return children
         
     def childexist(self,indiv,pop):
@@ -167,8 +163,7 @@ class GA(ContinuousOptimizer, Evolution):
                              self.mins[i])
 
         return res
-    # ---
-    
+   
     @property
     def selectionSize(self):
         """ the number of parents selected from the current population """
@@ -202,11 +197,9 @@ class GA(ContinuousOptimizer, Evolution):
         parents = self.select()
         es = min(self.eliteSize, self.selectionSize)
         self.currentpop = parents[:es]
-        '''Modified by JPQ '''
         nbchildren = self.populationSize - es
         if self.populationSize - es <= 0:
             nbchildren = len(parents)
         for child in self.crossOver(parents, nbchildren ):
             self.currentpop.append(self.mutated(child))
-        # ---
 

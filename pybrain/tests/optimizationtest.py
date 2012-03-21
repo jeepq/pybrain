@@ -257,6 +257,7 @@ if __name__ == '__main__':
     allalgos = filter(lambda c: (isclass(c)
                                  and issubclass(c, bbo.BlackBoxOptimizer)
                                  and not issubclass(c, mobj.MultiObjectiveGA)
+                                 and not issubclass(c, mobj.ConstMultiObjectiveGA)
                                  ),
                       globals().values())
 
